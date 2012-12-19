@@ -1,0 +1,9 @@
+<% types = variables[0] %>
+<%  types.each do |type| %>
+  <% @count[1].each_pair do |unit, qty| %>
+    <% if @rel.unitlist[unit].type == type %>
+      <%= "#{qty},#{unit}\n" %>
+      <% @tmr[unit] = qty  %>
+    <% end %>
+  <% end %>
+<% end %>
