@@ -4,7 +4,7 @@ require './lib/release_io'
 
 class Release
   attr_accessor  :job_no, :release_label, :unit_type_array, :unitlist, :file, :piece_list_file
-  attr_accessor  :filename, :directory, :eng_ero_release_directory, :program_directory
+  attr_accessor  :filename, :directory, :eng_ero_release_directory, :program_directory, :release_directory
   attr_reader    :type_cats
 
   include ReleaseExcel

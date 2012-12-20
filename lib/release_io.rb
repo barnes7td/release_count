@@ -1,8 +1,16 @@
 module ReleaseIO
 
   def get_last_release
+    read_last_release if release_exists?
+  end
+
+  def release_exists?
     load "#{@program_directory}/lib/release/io/current_release.rb"
     @current_release  = CurrentRelease.new(self)
+    @current_release.exists?
+  end
+
+  def read_last_release
     @current_release.load_data
     @data             = @current_release.data 
     @job_no           = @data[0]
@@ -10,16 +18,22 @@ module ReleaseIO
     setup
   end
 
-  def setup
-    set_job_folder_directories
+  def set_release_info(arr)
+    @job_no = arr[0]
+    @release_label = arr[1]
+  end
 
-    #Create FilE
-    @job_directory      = "#{@data_directory}/#{@job_no}/"   
-    @release_directory  = "#{@job_directory}/#{@job_no}_#{@release_label}_COUNT/"    
+  def setup
+    @job_directory      = "#{@data_directory}/#{@job_no}"   
+    @release_directory  = "#{@job_directory}/#{@job_no}_#{@release_label}_COUNT"    
     @release_filename   = "#{@job_no}-#{@release_label}.yml"
 
     create_directory @job_directory
     create_directory @release_directory
+
+    @current_release.save @job_no, @release_label
+
+    set_job_folder_directories
   end
 
   def create_directory(dir)
@@ -31,12 +45,13 @@ module ReleaseIO
     jff = JobFolderFind.new @job_no
 
     @eng_job_directory = jff.directory
-    @eng_ero_release_directory = "#{@eng_job_directory}/Release/"
+    @eng_ero_release_directory = "#{@eng_job_directory}/Release"
     @eng_ero_name = "#{@job_no} ERO #{@release_label}.xlsx"
     @eng_ero_file = "#{@eng_ero_release_directory}/#{@eng_ero_name}"
 
     @piece_list_name = "#{@job_no} #{@release_label} Piece List.xlsx"
     @piece_list_file = "#{@release_directory}/#{@piece_list_name}"
+    puts @release_directory
   end
 
   ####

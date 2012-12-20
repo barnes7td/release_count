@@ -17,21 +17,6 @@ module ReleaseExcel
     uc.run_reports(rel)
   end
 
-  def change_release
-    show_input
-    @state = :setup_release_1
-    @state_status.text = @state.to_s
-    @prompt.text = "What is the Job Number?"
-  end
-
-  def create_release
-    load "#{program_directory}/lib/release/excel/writer/xl_piece_list_creator.rb"
-    show_input
-    @state = :start_release_1
-    @state_status.text = @state.to_s
-    @prompt.text = "What is the Job Number?"
-  end
-
   def create_ero
     load "#{program_directory}/lib/release/excel/writer/xl_ero_creator.rb"
     XL_EROStarter.new(@job_no, @release_label, @eng_ero_release_directory, @eng_ero_name, self)
@@ -54,19 +39,15 @@ module ReleaseExcel
 
   def get_item_children(unit)
     load "#{program_directory}/lib/release.rb"
-    rel = Release.new SHOES
-    rel.setup(@job_no, @release)
-    rel = load_release(rel, rel.filename)
+    p @unitlist
 
-    @shoes.report ""
-    string = "--#{@item_report.text}--\n"
+    string = "--#{unit}--\n"
     if @unitlist.has_key? unit
       @unitlist[unit].children.each_pair do |name, qty|
         string << "#{name}:  #{qty} \n"
       end
     else string = "Wrong Name"
     end
-    @shoes.report string
   end
 
 

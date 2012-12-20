@@ -15,7 +15,7 @@ module ViewLogic
   end
 
   def show_report(report_name)
-    dir = get_directory report_name
+    dir = get_report report_name
     if File.exist?(dir)
       report File.read(dir)
       @current_report = report_name
@@ -23,6 +23,10 @@ module ViewLogic
       report "Report does not exist"
       @current_report = false
     end
+  end
+
+  def show_item_report
+    report @main_app.get_item_children @item_report.text
   end
 
   def update_based_on_state
@@ -37,7 +41,9 @@ module ViewLogic
     when :setup_release_2
       @data << @enter_box.text.upcase
       # setup_release
-      load
+      @main_app.set_release_info @data
+      @main_app.setup
+      display_job_info @data[0], @data[1]
       prompt ""
       @enter_box.text = ""
       @state = :base
@@ -91,7 +97,7 @@ module ViewLogic
 
 
   def get_report(report = @current_report)
-    "#{@rel.ero_job_releasae_directory}/#{get_report_filename(report)}"
+    "#{@main_app.release_directory}/#{get_report_filename(report)}"
   end
 
   def get_report_filename(report)
@@ -112,7 +118,7 @@ module ViewLogic
   end
 
   def current_modification_time
-    @current_time = File.mtime @main_app.piece_list_file if File.exist? @main_app.piece_list_file
+    @current_time = File.mtime @main_app.piece_list_file if @main_app.release_exists?
   end
 
   def previous_modification_time

@@ -49,7 +49,7 @@ Shoes.app :title => "Tuttle Release", :height => 800, :width => 700 do
     end
 
     flow do 
-      button "Change Release"  do @main_app.change_release end
+      button "Change Release"  do change_release end
       button "Open Piece List" do @main_app.open_piece_list end
     end
 
@@ -78,7 +78,7 @@ Shoes.app :title => "Tuttle Release", :height => 800, :width => 700 do
       button "Release Report"  do show_report(:release) end
       button "Shipping Report" do show_report(:ship) end
       button "TMR Report"      do show_report(:tmr) end
-      button "Item Report"     do @main_app.get_item_children end
+      button "Item Report"     do show_item_report end
       @item_report = edit_line :width => 60
     end
     

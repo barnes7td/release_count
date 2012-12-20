@@ -6,10 +6,19 @@ class CurrentRelease
 
   def initialize(rel)
     @yml_file = "#{rel.program_directory}/data/data.yml"
-    @data = []
   end
 
-  def save
+  def create_data_file
+    File.open(@yml_file, "w") { |f| f.puts " " }
+  end
+
+  def exists?
+    File.exists? @yml_file
+  end
+
+  def save(job_no, release_label)
+    @data = [job_no, release_label]
+    create_data_file unless exists?
     File.open(@yml_file, "w") { |f| YAML.dump(@data, f) }
   end
 
