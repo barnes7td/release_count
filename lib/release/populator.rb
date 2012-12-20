@@ -1,19 +1,20 @@
-load "#{$DIR}/programs/release_count/MODEL/release_class.rb"
-
 class Populator
 
   attr_accessor :rel
   attr_reader :data
 
-  def initialize(data, shoes)
+  def initialize(data, rel)
+    @rel = rel
+    load "#{@rel.program_directory}/programs/release_count/MODEL/release_class.rb"
+
     @sheet = nil
     @rail = nil
     @form_data = data
     @header = data[0]
     @lines = data[1]
 
-    @rel = Release.new shoes
-		@rel.setup(@header[0], @header[1])
+    @rel.set_release_info(@header[0], @header[1])
+		@rel.setup
     populate_model(@lines)
   end
 

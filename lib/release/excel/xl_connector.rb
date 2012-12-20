@@ -26,9 +26,10 @@ class Xl_Connector
   end
 
   def set_book(wb_name)
-      @wb = @xl.Workbooks(wb_name)
-      @wb.Activate
-      return @wb
+    puts wb_name
+    @wb = @xl.Workbooks(wb_name)
+    @wb.Activate
+    return @wb
   end
 
   def open_workbook(filename)

@@ -1,10 +1,10 @@
 require 'green_shoes'
 require 'pathname'
-require 'yaml'
 
 require './lib/view/view_logic'
 require './lib/view/view_api'
-require './lib/release'
+
+require './lib/release_controller'
 
 # require './programs/start_release'
 # require './programs/set_release'
@@ -24,7 +24,7 @@ Shoes.app :title => "Tuttle Release", :height => 800, :width => 700 do
   extend ViewAPI
 
   @program_directory  = Pathname.new(__FILE__).realpath.dirname.to_s
-  @main_app = Release.new self, @program_directory
+  @release_controller = ReleaseController.new @program_directory
 
   ###--- VIEW ---###
 

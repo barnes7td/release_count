@@ -1,3 +1,5 @@
+require 'yaml'
+
 module ViewLogic
 
   @state = :base
@@ -41,15 +43,17 @@ module ViewLogic
     when :setup_release_2
       @data << @enter_box.text.upcase
       # setup_release
-      @main_app.set_release_info @data
-      @main_app.setup
-      display_job_info @data[0], @data[1]
-      prompt ""
-      @enter_box.text = ""
-      @state = :base
+      if @main_app.release_exists?
+        @main_app.set_release_info @data
+        @main_app.setup
+        display_job_info @data[0], @data[1]
+        prompt ""
+        @state = :base
+      else
+        change_release
+      end
       @state_status.text = @state.to_s
-      hide_input
-      observe_piece_list
+      @enter_box.text = ""
     when :start_release_1
       @data = []
       @data << @enter_box.text
@@ -59,7 +63,10 @@ module ViewLogic
       @state_status.text = @state.to_s
     when :start_release_2
       @data << @enter_box.text.upcase
-      setup_release
+      @main_app.set_release_info @data
+      @main_app.setup
+      start
+      # setup_release
       XL_PLStarter.new(@job_no, @release, SHOES)
       prompt ""
       @enter_box.text = ""
@@ -78,10 +85,25 @@ module ViewLogic
     @prompt.text = "What is the Job Number?"
   end
 
-  def load_release(release, filename)
-    release = YAML.load(File.read(filename))
-    @shoes.report "Release file was loaded"
-    return release
+  # def load_release(release, filename)
+  #   release = YAML.load(File.read(filename))
+  #   @shoes.report "Release file was loaded"
+  #   return release
+  # end
+
+  def load_release(job_no, release_label)
+    @job_no           = job_no
+    @release_label    = release_label
+    #release = Release.new
+    
+    #@main_app.open_piece_list
+
+    # @main_app.update_count
+
+    new_release = Release.new self, @program_directory
+    new_release = YAML.load(File.read @release_controller.yml_file )
+    @main_app = new_release
+    @main_app.setup
   end
 
   def create_release
@@ -111,12 +133,6 @@ module ViewLogic
     end
   end
 
-  def open_piece_list
-    load "#{program_directory}/lib/release/excel/xl_connector.rb"
-    xl = Xl_Connector.new
-    xl.open_workbook @pl_file
-  end
-
   def current_modification_time
     @current_time = File.mtime @main_app.piece_list_file if @main_app.release_exists?
   end
@@ -126,23 +142,40 @@ module ViewLogic
   end
 
   def observe_piece_list
-    @previous_time = current_modification_time
+    if @main_app.release_exists?
+      @previous_time = current_modification_time
 
-    every 1 do
-      if @previous_time
-        if current_modification_time > previous_modification_time
-          update_model
+      every 1 do
+        if @previous_time
+          if current_modification_time > previous_modification_time
+            update_model
+          end
         end
       end
     end
   end
 
-  def start
-    @main_app.get_last_release
-    hide_input
-    display_job_info @main_app.job_no, @main_app.release_label
+  def release_exists?
+    @release_controller.exists?
+  end
 
-    observe_piece_list
+  def start
+    hide_input
+    #@main_app.get_last_release
+    # @main_app.set_release_info(arr)
+    # @main_app.setup
+    
+    if release_exists?
+      @release_controller.create_release
+      # load_release @main_app, @main_app.release_filename
+      load_release @main_app.job_no, @main_app.release_label
+      display_job_info @main_app.job_no, @main_app.release_label
+      report "Changed Releases"
+      observe_piece_list
+    else
+      report "Release does not exist"
+      change_release
+    end
   end
 
 end

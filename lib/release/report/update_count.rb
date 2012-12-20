@@ -1,18 +1,17 @@
-load "#{$DIR}/programs/release_count/SETUP/xl_connector.rb"
-load "#{$DIR}/programs/release_count/SETUP/xl_reader.rb"
-load "#{$DIR}/programs/release_count/SETUP/formatter.rb"
-load "#{$DIR}/programs/release_count/SETUP/populator.rb"
-
-load "#{$DIR}/programs/release_count/REPORTS/reporter.rb"
-load "#{$DIR}/programs/release_count/BOM/bom_creator.rb"
-load "#{$DIR}/programs/release_count/JOB_TESTS/test_data.rb"
-
 
 class UpdateCount
 	attr_reader :wb_name
 
-def initialize(shoes)
-	@shoes = shoes
+def initialize(rel)
+	@rel = rel
+
+	load "#{@rel.program_directory}/lib/release/excel/xl_connector.rb"
+	load "#{@rel.program_directory}/lib/release/excel/xl_reader.rb"
+	load "#{@rel.program_directory}/lib/release/formatter.rb"
+	load "#{@rel.program_directory}/lib/release/populator.rb"
+
+	load "#{@rel.program_directory}/lib/release/excel/writer/bom_creator.rb"
+	load "#{@rel.program_directory}/lib/release/validation/test_data.rb"
 end
 
 def run(wb_name)
@@ -27,8 +26,8 @@ def run(wb_name)
 	end
 	error_report << "~~~~~~~~~ END OF REPORT ~~~~~~~~~\n\n\n"
 	map = merge_maps maps # [sheet, post, details, sections]
-	rel = run_count(map)
-	run_reports(rel)
+	run_count(map)
+	@rel.run_reports
 	error_report << updated_time
 	@shoes.report error_report
 
@@ -74,10 +73,10 @@ def collect_data(tab_name, error_report)
 		xl_read = Xl_Reader.new(ws_sheet)
 		raw_sheet_info = xl_read.get_info
 		#FORMAT READ DATA
-		formatter = Formatter.new(raw_sheet_info)
+		formatter = Formatter.new(raw_sheet_info, @rel)
 		form_info = formatter.form_data
 		#TEST DATA
-		data_tester = DataTester.new(form_info[1], tab_name)
+		data_tester = DataTester.new(form_info[1], tab_name, @rel)
 		error_report << "#{tab_name} Error Report:"
 		error_report << "\n"
 		if data_tester.error_report.length == 0
@@ -92,26 +91,7 @@ end
 
 def run_count(map)
 	#ADD DATA TO MODEL
-	pop = Populator.new(map, @shoes)
-	rel = pop.rel
-	puts
-	puts "Release Model Created"
-	return rel
-end
-
-def run_reports(rel)
-	rep = Reporter.new(@shoes)
-	rep.run rel
-	rep.report_sheet_total_txt
-	rep.report_bom_csv
-	rep.report_detail_breakdown
-	rep.report_post_breakdown
-	rep.report_panel_breakdown
-	rep.report_group_breakdown
-	rep.report_release_list
-	rep.report_ship_loose
-	rep.report_tmr
-	@shoes.report updated_time
+	Populator.new(map, @rel)
 end
 
 def updated_time

@@ -4,7 +4,7 @@ module ReleaseExcel
     @previous_time = @current_time
     load "#{@program_directory}/lib/release/report/update_count.rb"
     uc = UpdateCount.new(self)
-    uc.run @pl_file_short
+    uc.run @piece_list_name
   end
 
   def run_reports

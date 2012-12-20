@@ -1,11 +1,11 @@
-load "#{$DIR}/programs/release_count/MODEL/type_categories.rb"
-
 class Formatter
 
   attr_accessor  :list_data
   attr_accessor  :form_data
 
-  def initialize(data)#[header, lines]
+  def initialize(data, rel)#[header, lines], release
+    @rel = rel
+    load "#{@rel.program_directory}lib/release/type_categories.rb"
     @data = data
     @header = data[0]
     @lines = data[1]

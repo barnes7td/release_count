@@ -1,16 +1,19 @@
 require 'win32ole'
 
-load "#{$DIR}/programs/release_count/SETUP/xl_connector.rb"
-load "#{$DIR}/programs/release_count/REPORTS/reporter.rb"
-load "#{$DIR}/programs/release_count/BOM/sorter_bom.rb"
+
 
 class BOM_Creator
 
-  def initialize(release, reporter, wb)
+  def initialize(rel, reporter, wb)
     puts
     puts 'BOM CREATOR'
     #
-    @release = release
+    @rel = rel
+
+    load "#{@rel.program_directory}/lib/release/excel/xl_connector.rb"
+    load "#{@rel.program_directory}/lib/release/report/reporter.rb"
+    load "#{@rel.program_directory}/lib/release/excel/sorter_bom.rb"
+
     @reporter = reporter
     @type_cats = @release.type_cats
     @wb = wb

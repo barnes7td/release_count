@@ -1,10 +1,11 @@
-load "#{$DIR}/programs/release_count/MODEL/type_categories.rb"
-
 class DataTester
 
 	attr_reader :error_report
 
-	def initialize(formatted_data, tab_name)
+	def initialize(formatted_data, tab_name, rel)
+		@rel = rel
+		load "#{@rel.program_directory}/lib/release/type_categories.rb"
+
 		@tab_name = tab_name
 		@error_report = []
 		@data = formatted_data  #[parent, name, type, qty, ship_loose]
