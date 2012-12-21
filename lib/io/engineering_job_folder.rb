@@ -1,4 +1,4 @@
-class JobFolderFind
+class EngineeringJobFolder
   attr_reader :directory, :directories, :job_type
 
   def initialize(job_no)

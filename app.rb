@@ -1,37 +1,16 @@
 require 'green_shoes'
 require 'pathname'
 
-require './lib/view/view_logic'
+# require './lib/view/view_logic'
 require './lib/view/view_api'
-
-require './lib/release_controller'
-
-# require './programs/start_release'
-# require './programs/set_release'
-# require './programs/insert_cuts'
-# require './programs/show_reports'
-# require './programs/release_count/update_count'
-# require './programs/release_count/populate_bom'
-# require './programs/release_count/populate_tmr'
-
-# require './data/id'
-
-# $: << "."
+require './lib/application_controller'
 
 Shoes.app :title => "Tuttle Release", :height => 800, :width => 700 do
-
-  extend ViewLogic
-  extend ViewAPI
-
-  @program_directory  = Pathname.new(__FILE__).realpath.dirname.to_s
-  @release_controller = ReleaseController.new @program_directory
-
-  ###--- VIEW ---###
 
   background gainsboro
     
   stack :margin => 10 do
-    image "./resources/TuttleLogo.png"
+    image "./images/TuttleLogo.png"
 
     flow do
       para "Job No:",  :width => 100
@@ -88,6 +67,10 @@ Shoes.app :title => "Tuttle Release", :height => 800, :width => 700 do
 
   ###--- INITIALIZE ---###
 
-  start
+  #extend ViewLogic
+  extend ViewAPI
+
+  @program_directory  = Pathname.new(__FILE__).realpath.dirname.to_s
+  @controller = ApplicationController.new self, @program_directory
   
 end
