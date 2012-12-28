@@ -1,8 +1,8 @@
 require 'yaml'
-require './lib/release_excel'
-require './lib/release_io'
+require './lib/release/release_excel'
+require './lib/release/release_io'
 
-class Release
+class ReleaseModel
   attr_accessor  :job_no, :release_label, :unit_type_array, :unitlist, :file, :piece_list_file, :release_filename
   attr_accessor  :filename, :directory, :eng_ero_release_directory, :program_directory, :release_directory
   attr_reader    :type_cats
@@ -10,15 +10,14 @@ class Release
   include ReleaseExcel
   include ReleaseIO
 
-  def initialize(shoes, program_directory)
-    @shoes = shoes
-    @program_directory = program_directory
-    # @data_directory    = "#{ENV["HOME"]}/Dropbox/Tuttle/release_count"
+  def initialize(state)
+    @state = state
+    @program_directory = @state.program_directory
 
-    load "#{@program_directory}/lib/release/type_categories.rb"
+    load "#{@program_directory}/lib/release/model/type_categories.rb"
     @type_cats = Type_Categories.new()
 
-    load "#{@program_directory}/lib/release/unit.rb"
+    load "#{@program_directory}/lib/release/model/unit.rb"
     @unitlist = Hash.new #|name, id|
     @unitlist['EXTRA'] = Unit.new('EXTRA', :sheet)
   end

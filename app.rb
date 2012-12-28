@@ -1,7 +1,7 @@
 require 'green_shoes'
 require 'pathname'
 
-# require './lib/view/view_logic'
+require './lib/view/view_logic'
 require './lib/view/view_api'
 require './lib/application_controller'
 
@@ -13,41 +13,41 @@ Shoes.app :title => "Tuttle Release", :height => 800, :width => 700 do
     image "./images/TuttleLogo.png"
 
     flow do
-      para "Job No:",  :width => 100
-      @job_no_display  = para "-", :width => 100
-      para "Release:", :width => 100
-      @release_display = para "-", :width => 100
-      @state_status    = para @state.to_s, :width => 200
+                          para "Job No:",  :width => 100
+      @job_no_display  =  para "-", :width => 100
+                          para "Release:", :width => 100
+      @release_display =  para "-", :width => 100
+      @state_status    =  para @state.to_s, :width => 200
     end
 
     @prompt = para ""
 
     flow do
-      @enter_box = edit_line :width => 200
+      @enter_box    = edit_line :width => 200
       @enter_button = button "Enter" do update_based_on_state end
     end
 
     flow do 
       button "Change Release"  do change_release end
-      button "Open Piece List" do @main_app.open_piece_list end
+      button "Open Piece List" do @controller.open_piece_list end
     end
 
     para "Create"
     
     flow do
-      button "Create Release"   do @main_app.create_release end
-      button "Create ERO"       do @main_app.create_ero end
-      button "Create BOM's"     do @main_app.create_bom end
-      button "Create Cut Pics"  do @main_app.create_cut_pics end
-      button "Create TMR"       do @main_app.create_tmr end
+      button "Create Release"   do @controller.create_release end
+      button "Create ERO"       do @controller.create_ero end
+      button "Create BOM's"     do @controller.create_bom end
+      button "Create Cut Pics"  do @controller.create_cut_pics end
+      button "Create TMR"       do @controller.create_tmr end
     end
 
     para "Report"
 
     flow do
-      button "Update Count"         do @main_app.update_count end
-      button "Open Current Report"  do open_current_reports end
-      button "Run Reports"          do @main_app.run_reports end
+      button "Update Count"         do @controller.update_count end
+      button "Open Current Report"  do open_current_report end
+      button "Run Reports"          do @controller.run_reports end
     end
 
     flow do
@@ -67,10 +67,12 @@ Shoes.app :title => "Tuttle Release", :height => 800, :width => 700 do
 
   ###--- INITIALIZE ---###
 
-  #extend ViewLogic
+  extend ViewLogic
   extend ViewAPI
 
   @program_directory  = Pathname.new(__FILE__).realpath.dirname.to_s
   @controller = ApplicationController.new self, @program_directory
+
+  # start
   
 end

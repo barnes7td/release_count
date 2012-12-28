@@ -6,7 +6,7 @@ module ViewLogic
 
   ##--EVENTS
 
-  def open_current_reports
+  def open_current_report
     if @current_report
       Thread.new do
         `start notepad.exe #{get_report}`
@@ -17,7 +17,7 @@ module ViewLogic
   end
 
   def show_report(report_name)
-    dir = get_report report_name
+    dir = @controller.get_report report_name
     if File.exist?(dir)
       report File.read(dir)
       @current_report = report_name
@@ -28,7 +28,7 @@ module ViewLogic
   end
 
   def show_item_report
-    report @main_app.get_item_children @item_report.text
+    report @controller.release_model.get_item_children @item_report.text
   end
 
   def update_based_on_state
@@ -118,20 +118,7 @@ module ViewLogic
   ##--METHODS
 
 
-  def get_report(report = @current_report)
-    "#{@main_app.release_directory}/#{get_report_filename(report)}"
-  end
-
-  def get_report_filename(report)
-    case report
-    when :sheet   then "Count_Sheets.txt"
-    when :detail  then "Detail Breakdown.txt"
-    when :post    then "Post Breakdown.txt"
-    when :release then "Release_List.txt"
-    when :ship    then "Ship_Loose_List.txt"
-    when :tmr     then "TMR.txt"
-    end
-  end
+  
 
   def current_modification_time
     @current_time = File.mtime @main_app.piece_list_file if @main_app.release_exists?

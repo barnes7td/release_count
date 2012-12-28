@@ -1,5 +1,5 @@
 class ReleaseInfo
-  attr_accessor :job_no, :release_label
+  attr_accessor :job_no, :release_label, :app_release_directory
 
   def initialize(program_directory)
     @program_directory = program_directory
@@ -16,8 +16,8 @@ class ReleaseInfo
   def set_directories
     @app_data_directory        = "#{ENV["HOME"]}/Dropbox/Tuttle/release_count"
     @app_job_directory         = "#{@app_data_directory}/#{@job_no}"   
-    @app_release_directory     = "#{@job_directory}/#{@job_no}_#{@release_label}_COUNT"
-    @app_release_filename_full = "#{@release_directory}/#{@job_no}-#{@release_label}.yml"
+    @app_release_directory     = "#{@app_job_directory}/#{@job_directory}/#{@job_no}_#{@release_label}_COUNT"
+    @app_release_filename_full = "#{@app_release_directory}/#{@job_no}-#{@release_label}.yml"
 
     load "#{@program_directory}/lib/io/engineering_job_folder.rb"
     @eng_job_folder = EngineeringJobFolder.new @job_no
