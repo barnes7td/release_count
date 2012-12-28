@@ -10,9 +10,9 @@ class ReleaseModel
   include ReleaseExcel
   include ReleaseIO
 
-  def initialize(state)
-    @state = state
-    @program_directory = @state.program_directory
+  def initialize(program_directory)
+    #@state = state
+    @program_directory = program_directory
 
     load "#{@program_directory}/lib/release/model/type_categories.rb"
     @type_cats = Type_Categories.new()

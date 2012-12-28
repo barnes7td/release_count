@@ -92,27 +92,6 @@ class Counter
     end
   end
 
-  def do_count_ship_old(new_hash, parent, i)
-    if i == nil then i = 1 end
-    parent.children.each_pair{|k, v|
-      v2 = v * i
-      unless @rel.unitlist[k].children.empty?
-        #p @rel.unitlist[k].ship_loose
-        do_count_ship(new_hash, @rel.unitlist[k], v2)
-      end
-        if new_hash.has_key?(k)
-          v3 = v2 + new_hash[k]
-        else v3 = v2
-      end
-      if parent == @rel
-        new_hash[k]= v3
-        else if parent.ship_loose.has_key?(k)
-          new_hash[k]= v3
-        end
-      end
-    }
-  end
-
   def rel_count(sheet_ct)
     hash = {}
     ct = sheet_ct.clone
